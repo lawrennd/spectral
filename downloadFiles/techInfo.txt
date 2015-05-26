@@ -1,0 +1,77 @@
+
+
+
+
+ model = ppa(X, y, noiseType, kernelType);
+
+ loglike = ppaCalculateLogLike(model)
+
+ loglike = ppaCalculateLogLike2(model)
+
+ h = ppaContour(X, Y, Z, lineWidth)
+
+ g = ppaCovarianceGradient(invK, m)
+
+ ppaDisplay(model)
+
+ [model,options]= ppaEStep(model, options)
+
+ model=ppaExpectf(model)
+
+ model = ppaExpectfBar(model)
+
+ model = ppaExpectfBarfBar(model)
+
+ model = ppaExpectff(model)
+
+ ppaGunnarData(dataSet, dataNum, kernelType, invWidth)
+
+ ppaGunnarResultsTest(dataSet);
+
+ classError = ppaGunnarTest(dataSet, dataNum, kernelType, ...
+%                                     kernParams, noiseParams, beta)
+
+ model = ppaInit(model, options)
+
+ g = ppaKernelGradient(params, model)
+
+ g = ppaKernelLogLikeGrad(model)
+
+ L = ppaKernelLogLikelihood(model);
+
+ f = ppaKernelObjective(params, model)
+
+ [model,options]= ppaMStep(model, options)
+
+ [X, Y, Z, varZ] = ppaMeshVals(model, limx, limy, number)
+
+ model = ppaOptimiseKernel(model, display, iters);
+
+ [model] = ppaOptimisePPA(model, options);
+
+ options = ppaOptions;
+
+ y = ppaOut(model, x);
+
+ [mu, varsigma] = ppaPosteriorMeanVar(model, X);
+
+ ppaTwoDPlot(model, iter, X, y)
+
+ model = ppaUpdateB(model)
+
+ model = ppaUpdateBscalar(model)
+
+ model = ppaUpdateKernel(model, options)
+
+ g = ppaVarLikeCovarianceGradient(invK, m)
+
+ g = ppaVarLikeKernelGradient(params, model)
+
+ g = ppaVarLikeKernelLogLikeGrad(model)
+
+ L = ppaVarLikeKernelLogLikelihood(model);
+
+ f = ppaVarLikeKernelObjective(params, model)
+
+ model = ppaVarLikeOptimiseKernel(model, display, iters);
+

@@ -29,9 +29,294 @@
       </header>
       <section>
         <h1>
-<a id="probabilistic-point-assimilation-for-gaussian-processes" class="anchor" href="#probabilistic-point-assimilation-for-gaussian-processes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probabilistic Point Assimilation for Gaussian Processes</h1>
+<a id="ppa-software" class="anchor" href="#ppa-software" aria-hidden="true"><span class="octicon octicon-link"></span></a>PPA Software</h1>
 
-<p>The code for variational inference using KL correction in GPs.</p>
+<p>This page will describe examples of how to use the Probabilistic Point
+Assimilation Software (PPA) available for <a href="http://ext.dcs.shef.ac.uk/%7Eu0015/cgi-bin/downloadForm.cgi?toolbox=ppa">download
+here</a>.</p>
+
+<h3>
+<a id="release-information" class="anchor" href="#release-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release Information</h3>
+
+<p>Current release is 0.1.</p>
+
+<p>Release 0.1 is the first release of this software.</p>
+
+<p>| <strong>Toolbox</strong>                          | <strong>Version</strong>                         |
++--------------------------------------+-------------------------------------+
+| <a href="/kern/downloadFiles">KERN</a>          | 0.142                               |
+| <a href="/ndlutil/downloadFiles">NDLUTIL</a>    | 0.15                                |
+| <a href="/optimi/downloadFiles">OPTIMI</a>      | 0.13                                |
+| <a href="/prior/downloadFiles">PRIOR</a>        | 0.13                                |
+| <a href="/mltools/downloadFiles">MLTOOLS</a>    | 0.11                                |
+| <a href="/noise/downloadFiles">NOISE</a>        | 0.13                                |</p>
+
+<p>Finally you will also need the <a href="http://www.aston.ac.uk/eas/research/groups/ncrg/resources/netlab/">NETLAB
+toolbox</a> in your path.</p>
+
+<h2>
+<a id="setting-the-test-up" class="anchor" href="#setting-the-test-up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setting the test up</h2>
+
+<p>In order for the code to function correctly, the files need to be set-up
+in the structure depicted in the following figure</p>
+
+<p><img src="dirfig.png" alt=""></p>
+
+<p>It should be noted that the <a href="http://users.rsise.anu.edu.au/%7Eraetsch/data/index.html">Gunnar
+Datasets</a> have
+had their original directory structure changed. For instance, for the
+<strong>Ringnorm</strong> dataset the downloaded structure takes the form</p>
+
+<p><code>\\home\brain\raetsch\expose\ringnorm\*.asc</code></p>
+
+<p>but we have it as</p>
+
+<p><code>\\ROOT\mlprojects\data\ringnorm\*.asc .</code></p>
+
+<p>in our directory structure. Similarly any of the datasets needs to be in
+the above form, with the data files being found within the directory
+with the same name. We also note that all the required M file packages
+need to be added to the path. All the test scripts are stored at
+<code>ROOT/mlprojects/ppa/gunnarTests/</code> and the test M files are put into the
+PPA <code>matlab</code> directory.</p>
+
+<h3>
+<a id="enabling-all-scripts-and-m-files-for-the-tests" class="anchor" href="#enabling-all-scripts-and-m-files-for-the-tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Enabling all scripts and M files for the tests</h3>
+
+<p>In the following scripts <em>ppaGunnarConvergence.sh</em>, <em>ppaGunnarPlot.sh</em>,
+<em>ppaGunnar.sh</em>, <em>ppaGunnarResults.sh</em> and <em>ppaTestGunnar.sh</em> the line</p>
+
+<p><code>path('/home/nk3/mlprojects/matlab/general',path)</code></p>
+
+<p>needs to be changed to</p>
+
+<p><code>path('/USERSROOT/mlprojects/matlab/general',path)</code></p>
+
+<p>where <code>USERSROOT</code> is the location of the mlprojects directory.</p>
+
+<p>It is also noted that the following files need changing to suit the
+users file store as well, these M files are <em>ppaGunnarConvergence.m</em>,
+<em>ppaGunnarData.m</em>, <em>ppaGunnarResults.m</em>, <em>ppaGunnarResultsTest.m</em>,
+<em>ppaGunnarTest.m</em>, <em>ppaPlotConvergenceResults.m</em>,
+<em>ppaPlotMultipleConvergenceResults1.m</em>,
+<em>ppaPlotMultipleConvergenceResults2.m</em> and
+<em>ppaPlotMultipleConvergenceResults3.m</em>.</p>
+
+<p>We need to modify these test M files such that we are calling the
+correct directory structure. As such you need to add or change the home
+parameter to your <code>ROOT</code> directory. For instance in the files in there
+orignal form the files have three home options which are</p>
+
+<pre><code>% My desktop
+% HOME = 'h:\';
+% My Laptop home
+% HOME = 'd:\work';
+% My Pascal cluster home
+% HOME = '/home/nk3';
+</code></pre>
+
+<p>These cover the three machines I have run these tests on. You need to
+change one of these such that</p>
+
+<p>``` % Your Home
+HOME = 'ROOT';</p>
+
+<pre><code>
+where `ROOT` is the directory in which the `mlprojects` directory is
+stored. With these changes this completes the setup.
+
+Four demos
+----------
+
+We have four simple demos that can be run from the directly from the ppa
+directory (but still ensure the data stes are in the correct positon
+within the directory structure). The first three tests are
+classification tests on a linear seperable case, an overlap case and a
+Banana dataset. The final case is a very simple regression case noise
+model, although we do note that regression for the model is tractable
+and does not require the approximation we include this test to show show
+how easy it is to plug in different nosie models.
+
+### Linear seperable demo
+
+From the matlab command line, ensure you our within
+`/USERSROOT/mlprojects/ppa/matlab.`
+
+Now run the following command at the command prompt
+
+```matlab
+&gt;&gt;  demppa1
+</code></pre>
+
+<p>Once the model has reached convergence the following plot should be
+displayed.</p>
+
+<p><img src="dem1plot.png" alt="">\
+ This plot shows the final plot for the <strong>linear seperable</strong> dataset.</p>
+
+<h3>
+<a id="overlap-demo" class="anchor" href="#overlap-demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overlap demo</h3>
+
+<p>From the matlab command line, ensure you our within
+<code>/USERSROOT/mlprojects/ppa/matlab.</code></p>
+
+<p>Now run the following command at the command prompt</p>
+
+<p><code>&gt;&gt;  demppa2</code></p>
+
+<p>Once the model has reached convergence the following plot should be
+displayed.</p>
+
+<p><img src="dem2plot.png" alt="">\
+ This plot shows the final plot for the <strong>overlap</strong> dataset.</p>
+
+<h3>
+<a id="banana-demo" class="anchor" href="#banana-demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Banana demo</h3>
+
+<p>From the matlab command line, ensure you our within
+<code>/USERSROOT/mlprojects/ppa/matlab.</code></p>
+
+<p>Now run the following command at the command prompt</p>
+
+<div class="highlight highlight-matlab"><pre><span class="pl-k">&gt;&gt;  </span>demppa3</pre></div>
+
+<p>Once the model has reached convergence the following plot should be
+displayed.</p>
+
+<p><img src="dem3plot.png" alt="">
+ This plot shows the final plot for the <strong>banana</strong> dataset.</p>
+
+<h3>
+<a id="regression-demo" class="anchor" href="#regression-demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Regression demo</h3>
+
+<p>From the matlab command line, ensure you our within
+<code>/USERSROOT/mlprojects/ppa/matlab.</code></p>
+
+<p>Now run the following command at the command prompt</p>
+
+<div class="highlight highlight-matlab"><pre><span class="pl-k">&gt;&gt;  </span>demppaRegression1</pre></div>
+
+<p>Once the model has reached convergence the following plot should be
+displayed.</p>
+
+<p><img src="regressplot.png" alt=""> 
+ This plot shows the final plot for the <strong>regression</strong> dataset.</p>
+
+<h2>
+<a id="convergence-tests-using-the-scripts" class="anchor" href="#convergence-tests-using-the-scripts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convergence tests using the scripts</h2>
+
+<p>The script files were designed to be run on a SCG managed cluster
+primarily the Pascal cluster. To run repeat the following</p>
+
+<p>From the server command line run the following</p>
+
+<div class="highlight highlight-sh"><pre>$ bash ppaGunnarConvergenceSCG.sh</pre></div>
+
+<p>once all the processes have finished running you can then run</p>
+
+<div class="highlight highlight-sh"><pre>$ bash ppaGunnarplot.sh</pre></div>
+
+<p>this will result in the convergence figures being plotted. The EPS plots
+will be saved in the following location</p>
+
+<p><code>ROOT\mlprojects\data\DATASETNAME\ICMLconv\ DATASETNAME_1 convFig.eps</code></p>
+
+<p><code>ROOT\mlprojects\data\DATASETNAME\ICMLconv\ DATASETNAME_1_cpuFig.eps</code></p>
+
+<p>where the former is a plot of the convergence of the standard
+variational method compared with that of the KL corrected bound and the
+latter is a plot of the CPU times per iteration.</p>
+
+<h2>
+<a id="convergence-tests-directly-from-the-matlab-command-line" class="anchor" href="#convergence-tests-directly-from-the-matlab-command-line" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convergence tests directly from the Matlab command line</h2>
+
+<p>The following example is for the <strong>banana</strong> dataset and for the first
+fold.</p>
+
+<p>From the matlab command line move to the <code>ppa/gunnarTests</code> directory.</p>
+
+<p>First run the following comman in the gunnarTest folder</p>
+
+<div class="highlight highlight-matlab"><pre><span class="pl-k">&gt;&gt;  </span>ppaGunnarConvergence(<span class="pl-s"><span class="pl-pds">'</span>banana<span class="pl-pds">'</span></span>,<span class="pl-c1">1</span>)</pre></div>
+
+<p>after which there will be a bit of a wait.</p>
+
+<p>After this process has finished now run the following command at the
+command prompt</p>
+
+<div class="highlight highlight-matlab"><pre><span class="pl-k">&gt;&gt;  </span>ppaPlotConvergenceResults(<span class="pl-s"><span class="pl-pds">'</span>banana<span class="pl-pds">'</span></span>,<span class="pl-c1">1</span>)</pre></div>
+
+<p>This command should result in the following information and plots to be
+displayed.</p>
+
+<pre><code>KL classification = 0.1181633 and SV classification = 0.1179592
+KL loglike = -130.8580181 and SV loglike = -130.8979431
+KL total number of iterations = 120.0000000,
+SV total number of iterations = 4102.0000000
+The difference between the iteration numbers (SV - KL) = 3982.0000000
+KL total CPU time = 1127.5400000 and SV total CPU time = 22544.1100000
+The difference between the CPU times (SV - KL) = 21416.5700000`
+</code></pre>
+
+<p><img src="bananaconv.png" alt=""> 
+ This plot shows the convergence figure for the <strong>banana</strong> dataset.</p>
+
+<p><img src="bananacpu.png" alt=""> 
+ This plot shows the CPU times figure for the <strong>banana</strong> dataset.</p>
+
+<p>Note if you wished to run these for any of the other datasets just
+substitute in the particular data sets name.</p>
+
+<h2>
+<a id="classification-tests" class="anchor" href="#classification-tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classification tests</h2>
+
+<p>Once again the scripts were designed to be run on the SCG managed pascal
+cluster. To run them you need to set up the files as previously noted.</p>
+
+<p>From the command prompt on the cluster you first need move to the
+directory <code>ROOT\mlprojects\ppa\gunnartests\</code>. From there you frist run
+the following</p>
+
+<pre><code>&gt;&gt;bash ppaGunnar.sh
+</code></pre>
+
+<p>this will send a lot of jobs to the cluster. These will take a while to
+run so be prepared for a wait.</p>
+
+<p>Once these jobs have completed the next step is to run the following
+script</p>
+
+<pre><code>&gt;&gt;bash ppaGunnarResults.sh
+</code></pre>
+
+<p>Once again this will send a job to the cluster but unlike the other this
+should only take a minute to run. Once this job is complete we then have
+to finally run</p>
+
+<pre><code>&gt;&gt;bash ppaTestGunnar.sh
+</code></pre>
+
+<p>Once these final jobs has finished you will find in your <code>ROOT</code>
+directory a set of .mat files namely</p>
+
+<p><code>banana.mat, breast-cancer.mat,diabetis.mat, german.mat, heart.mat, titanic.mat, twonorm.mat and waveform.mat.</code></p>
+
+<p>The mean and standard deviation of the test error for each data set can
+be found by first loading the dataset's <code>*.mat</code> (in the following we are
+loading the banana data set)</p>
+
+<pre><code>&gt;&gt; bananaLoad =  load('banana.mat')
+</code></pre>
+
+<p>we can then find the mean</p>
+
+<pre><code>&gt;&gt; meanB =  mean(bananaLoad.er)
+</code></pre>
+
+<p>and the standard deviation</p>
+
+<pre><code>&gt;&gt; meanB =  std(bananaLoad.er)
+</code></pre>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/lawrennd">lawrennd</a></p>

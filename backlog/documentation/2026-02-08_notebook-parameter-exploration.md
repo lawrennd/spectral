@@ -1,7 +1,7 @@
 ---
 id: "2026-02-08_notebook-parameter-exploration"
 title: "Create parameter exploration notebook"
-status: "Proposed"
+status: "Completed"
 priority: "Low"
 created: "2026-02-08"
 last_updated: "2026-02-08"

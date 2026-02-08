@@ -1,7 +1,7 @@
 ---
 id: "2026-02-08_notebook-spectrogram"
 title: "Create spectrogram clustering example notebook"
-status: "Proposed"
+status: "Completed"
 priority: "Medium"
 created: "2026-02-08"
 last_updated: "2026-02-08"

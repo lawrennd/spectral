@@ -202,10 +202,18 @@ class ElongatedKMeans:
             
             old_error = error
         
-        # Store results
+        # Store final centers
         self.cluster_centers_ = centers
-        self.labels_ = labels
-        self.inertia_ = error
+        
+        # IMPORTANT: Recompute labels using final centers to ensure consistency
+        # This ensures predict(X) matches labels_ for training data
+        final_distances = np.zeros((n_samples, self.n_clusters))
+        for j in range(self.n_clusters):
+            final_distances[:, j] = mahalanobis_distance(
+                X, centers[j], self.lambda_, self.epsilon
+            )
+        self.labels_ = np.argmin(final_distances, axis=1)
+        self.inertia_ = np.sum(np.min(final_distances, axis=1))
         self.n_iter_ = iteration + 1
         
         return self

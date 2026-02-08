@@ -172,8 +172,8 @@ class TestInternalConsistency:
         # Diagonal should be 1.0
         np.testing.assert_allclose(np.diag(A), 1.0, rtol=1e-10)
         
-        # All values in (0, 1]
-        assert np.all(A > 0)
+        # All values in [0, 1] (can be exactly 0 due to underflow for distant points)
+        assert np.all(A >= 0)
         assert np.all(A <= 1.0)
     
     def test_laplacian_eigenvalues(self):

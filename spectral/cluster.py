@@ -148,11 +148,14 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         # Second center: minimize (projection on first)^2 / norm
         # This finds point in different cluster (different radial direction)
         projections_sq = (PcEig @ centers[0]) ** 2
-        S = projections_sq / norms
+        # Avoid division by zero
+        S = projections_sq / (norms + 1e-10)
         idx_second = np.argmin(S)
         centers = PcEig[[idx_first, idx_second], :]
         
         # Main loop: iteratively add dimensions
+        kmeans = None  # Initialize to avoid UnboundLocalError
+        
         while not ExtraCluster and Dim < self.max_clusters:
             # Add origin as (Dim+1)-th center
             centers_with_origin = np.vstack([centers, np.zeros(Dim)])
@@ -175,6 +178,22 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
                 Dim += 1
                 
                 if Dim >= self.max_clusters:
+                    # Hit max clusters - use current clustering without origin
+                    # Dim was just incremented, so we have Dim-1 actual clusters
+                    # Run one final k-means without origin
+                    centers_final = kmeans.cluster_centers_[:-1]  # Remove origin
+                    n_final_clusters = len(centers_final)
+                    kmeans_final = ElongatedKMeans(
+                        n_clusters=n_final_clusters,
+                        lambda_=self.lambda_,
+                        epsilon=self.epsilon,
+                        max_iter=100,
+                        tol=1e-4
+                    )
+                    kmeans_final.fit(PcEig, centers_final)
+                    kmeans = kmeans_final  # Use final k-means result
+                    centers = kmeans.cluster_centers_
+                    Dim = n_final_clusters  # Update Dim to actual number of clusters
                     break
                 
                 # Take next eigenvector
@@ -210,38 +229,18 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
                 
                 # Use the clustering without origin
                 centers = kmeans.cluster_centers_[:-1]  # Remove origin
-                # Relabel to remove empty cluster
-                labels_final = kmeans.labels_.copy()
-                # Origin was last cluster (index Dim), should have no points
-                # Labels are already 0 to Dim-1 for non-origin clusters
         
         # Store final results
         self.n_clusters_ = Dim
         self.eigenvectors_ = PcEig
         self.centers_ = centers
         
-        # Convert labels to format: n_samples x n_clusters binary matrix (as in MATLAB)
-        # Actually, let's use standard format: n_samples array of integers
-        self.labels_ = kmeans.labels_
-        # Remove the origin cluster if it's empty
-        if not ExtraCluster:
-            # Map labels: origin cluster (index Dim) doesn't exist
-            self.labels_ = self.labels_[:Dim] if self.labels_.ndim > 1 else self.labels_
+        # Store labels (kmeans is guaranteed to be defined now)
+        if kmeans is not None:
+            self.labels_ = kmeans.labels_
         else:
-            # Map labels to remove origin cluster
-            self.labels_ = np.where(self.labels_ == Dim, -1, self.labels_)
-            if np.any(self.labels_ == -1):
-                # Shouldn't happen, but handle gracefully
-                # Reassign to nearest non-origin cluster
-                mask = self.labels_ == -1
-                if np.any(mask):
-                    # Compute distances to non-origin centers
-                    dists = np.zeros((np.sum(mask), Dim))
-                    for j in range(Dim):
-                        dists[:, j] = np.sum(
-                            (PcEig[mask] - centers[j]) ** 2, axis=1
-                        )
-                    self.labels_[mask] = np.argmin(dists, axis=1)
+            # Fallback: shouldn't happen but handle gracefully
+            self.labels_ = np.zeros(n_samples, dtype=int)
         
         return self
         

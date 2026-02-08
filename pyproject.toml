@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spectral-cluster"
+version = "0.1.0"
+description = "Automatic determination of number of clusters using spectral algorithms"
+authors = [
+    {name = "Guido Sanguinetti"},
+    {name = "Jonathan Laidler"},
+    {name = "Neil D. Lawrence"}
+]
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.7",
+    "scikit-learn>=1.0",
+    "matplotlib>=3.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=3.0",
+]
+examples = [
+    "jupyter>=1.0",
+    "scikit-image>=0.18",
+]
+
+[project.urls]
+Homepage = "https://github.com/lawrennd/spectral"
+Repository = "https://github.com/lawrennd/spectral"
+
+[tool.setuptools]
+packages = ["spectral"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

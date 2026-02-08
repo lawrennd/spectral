@@ -47,3 +47,50 @@ tenets/combine_tenets.py
 # VibeSafe documentation (system files)
 docs/whats_next_script.md
 docs/yaml_frontmatter_examples.md
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Virtual environments (project-specific)
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.idea/
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db

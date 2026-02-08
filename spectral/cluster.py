@@ -25,7 +25,7 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         Uses standard formula: exp(-||x-y||^2 / (2*sigma^2)).
         To convert from MATLAB code: sigma_python = sqrt(sigma_matlab / 2).
         Example: MATLAB sigma=0.05 → Python sigma≈0.158
-    lambda_ : float, default=0.2
+    lamb : float, default=0.1
         Elongation parameter for distance metric in k-means
     max_clusters : int, default=10
         Maximum number of eigenvectors to compute
@@ -33,6 +33,8 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         Threshold for determining if center is near origin
     random_state : int or None, default=None
         Random seed for reproducibility
+    verbose : bool, default=False
+        If True, print progress messages during fitting
         
     Attributes
     ----------
@@ -74,12 +76,13 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
     """
     
     def __init__(self, sigma, lambda_=0.2, max_clusters=10, 
-                 epsilon=0.0001, random_state=None):
+                 epsilon=0.0001, random_state=None, verbose=False):
         self.sigma = sigma
         self.lambda_ = lambda_
         self.max_clusters = max_clusters
         self.epsilon = epsilon
         self.random_state = random_state
+        self.verbose = verbose
         
     def fit(self, X, y=None):
         """
@@ -118,13 +121,38 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         X = np.asarray(X)
         n_samples = X.shape[0]
         
+        if self.verbose:
+            import time
+            print(f"SpectralCluster: Clustering {n_samples} points")
+            print(f"  Parameters: sigma={self.sigma}, lambda={self.lambda_}, max_clusters={self.max_clusters}")
+        
         # Step 1: Form affinity matrix A and normalized Laplacian L
+        if self.verbose:
+            t0 = time.time()
+            print(f"  Building {n_samples}×{n_samples} affinity matrix...", end='', flush=True)
+        
         self.affinity_matrix_ = build_affinity_matrix(X, self.sigma)
+        
+        if self.verbose:
+            print(f" done ({time.time()-t0:.2f}s)")
+            t0 = time.time()
+            print(f"  Computing normalized Laplacian...", end='', flush=True)
+        
         self.laplacian_matrix_ = normalize_laplacian(self.affinity_matrix_)
         
+        if self.verbose:
+            print(f" done ({time.time()-t0:.2f}s)")
+        
         # Step 2: Compute eigenvectors with largest eigenvalues
+        if self.verbose:
+            t0 = time.time()
+            print(f"  Computing eigenvectors...", end='', flush=True)
+        
         # Use scipy.linalg.eigh for symmetric matrices (more stable)
         eigvals, eigvecs = linalg.eigh(self.laplacian_matrix_)
+        
+        if self.verbose:
+            print(f" done ({time.time()-t0:.2f}s)")
         
         # Sort by eigenvalue in descending order
         idx = np.argsort(eigvals)[::-1]
@@ -136,6 +164,9 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         self.eigenvalues_ = eigvals[:self.max_clusters]
         
         # Step 3: Start with Dim=2 (first 2 eigenvectors)
+        if self.verbose:
+            print(f"  Determining number of clusters (iterative):")
+        
         Dim = 2
         ExtraCluster = False
         
@@ -160,6 +191,9 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
         kmeans = None  # Initialize to avoid UnboundLocalError
         
         while not ExtraCluster and Dim < self.max_clusters:
+            if self.verbose:
+                print(f"    Trying {Dim} dimensions...", end='', flush=True)
+            
             # Add origin as (Dim+1)-th center
             centers_with_origin = np.vstack([centers, np.zeros(Dim)])
             
@@ -176,7 +210,12 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
             # Check if any points assigned to origin (last cluster)
             n_points_in_origin = np.sum(kmeans.labels_ == Dim)
             
+            if self.verbose:
+                print(f" {Dim} clusters, origin has {n_points_in_origin} points", end='')
+            
             if n_points_in_origin > 0:
+                if self.verbose:
+                    print()
                 # There's an extra cluster - expand dimensionality
                 Dim += 1
                 
@@ -228,6 +267,8 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
                             centers[i] = PcEig[np.argmax(min_distances)]
             else:
                 # No points in origin cluster - found correct number
+                if self.verbose:
+                    print(" ✓ Found optimal number!")
                 ExtraCluster = True
                 
                 # Use the clustering without origin

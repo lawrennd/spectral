@@ -47,10 +47,14 @@ X = np.vstack([
 ])
 
 # Cluster with automatic number detection
-clf = SpectralCluster(sigma=0.05)
+clf = SpectralCluster(sigma=0.16)  # Standard RBF formula
 clf.fit(X)
 print(f"Found {clf.n_clusters_} clusters")  # Should find 3
 ```
+
+**Note on Sigma:** This implementation uses the standard RBF formula `exp(-d²/(2σ²))`.
+The original MATLAB uses `exp(-d²/σ)`. To convert: `σ_python = sqrt(σ_matlab / 2)`.
+See documentation for details.
 
 ## Examples
 

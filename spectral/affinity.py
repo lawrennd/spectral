@@ -49,9 +49,10 @@ def build_affinity_matrix(X: np.ndarray, sigma: float) -> np.ndarray:
     # cdist is optimized and handles the computation efficiently
     dists_sq = cdist(X, X, metric='sqeuclidean')
     
-    # Apply RBF (Gaussian) kernel: exp(-d^2 / sigma^2)
-    # Note: MATLAB code uses sigma directly, which is sigma^2 in standard notation
-    A = np.exp(-dists_sq / (sigma ** 2))
+    # Apply RBF (Gaussian) kernel: exp(-d^2 / sigma)
+    # IMPORTANT: MATLAB code divides by sigma (NOT sigma^2)
+    # This is non-standard but matches the paper implementation
+    A = np.exp(-dists_sq / sigma)
     
     return A
 

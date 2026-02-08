@@ -19,11 +19,14 @@ except ImportError:
 # Directory containing fixtures
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
-# Files to convert
+# Files to convert (both MATLAB and Octave)
 MAT_FILES = [
     "matlab_three_circles.mat",
     "matlab_affinity.mat",
-    "matlab_laplacian.mat"
+    "matlab_laplacian.mat",
+    "octave_three_circles.mat",
+    "octave_affinity.mat",
+    "octave_laplacian.mat"
 ]
 
 

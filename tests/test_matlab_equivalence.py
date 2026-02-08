@@ -65,13 +65,13 @@ class TestMATLABReferenceData:
     """Tests using MATLAB reference data (if available)."""
     
     @pytest.mark.skipif(
-        not (FIXTURES_DIR / "matlab_three_circles.npz").exists(),
-        reason="MATLAB reference data not available"
+        not (FIXTURES_DIR / "octave_three_circles.npz").exists(),
+        reason="Octave reference data not available"
     )
-    def test_three_circles_matches_matlab(self):
-        """Compare Python output to MATLAB reference for three circles."""
-        # Load MATLAB reference
-        ref = np.load(FIXTURES_DIR / "matlab_three_circles.npz")
+    def test_three_circles_matches_octave(self):
+        """Compare Python output to Octave/MATLAB reference for three circles."""
+        # Load Octave reference (MATLAB-compatible)
+        ref = np.load(FIXTURES_DIR / "octave_three_circles.npz")
         
         # Run Python implementation
         clf = SpectralCluster(sigma=0.158)  # sqrt(0.05/2) for standard RBF
@@ -88,39 +88,43 @@ class TestMATLABReferenceData:
         print(f"MATLAB clusters: {matlab_n_clusters}")
     
     @pytest.mark.skipif(
-        not (FIXTURES_DIR / "matlab_affinity.npz").exists(),
-        reason="MATLAB reference data not available"
+        not (FIXTURES_DIR / "octave_affinity.npz").exists(),
+        reason="Octave reference data not available"
     )
-    def test_affinity_matrix_matches_matlab(self):
-        """Compare affinity matrix computation to MATLAB."""
-        ref = np.load(FIXTURES_DIR / "matlab_affinity.npz")
+    def test_affinity_matrix_matches_octave(self):
+        """Compare affinity matrix computation to Octave/MATLAB."""
+        ref = np.load(FIXTURES_DIR / "octave_affinity.npz")
+        
+        # Convert sigma from Octave formula to Python formula
+        sigma_octave = float(ref['sigma'])
+        sigma_python = np.sqrt(sigma_octave / 2.0)
         
         # Compute Python affinity matrix
-        A_python = build_affinity_matrix(ref['x'], ref['sigma'].item())
+        A_python = build_affinity_matrix(ref['x'], sigma_python)
         
-        # Compare to MATLAB
+        # Compare to Octave
         np.testing.assert_allclose(
             A_python, ref['A'],
             rtol=1e-5, atol=1e-8,
-            err_msg="Affinity matrices differ from MATLAB"
+            err_msg="Affinity matrices differ from Octave"
         )
     
     @pytest.mark.skipif(
-        not (FIXTURES_DIR / "matlab_laplacian.npz").exists(),
-        reason="MATLAB reference data not available"
+        not (FIXTURES_DIR / "octave_laplacian.npz").exists(),
+        reason="Octave reference data not available"
     )
-    def test_laplacian_matches_matlab(self):
-        """Compare Laplacian computation to MATLAB."""
-        ref = np.load(FIXTURES_DIR / "matlab_laplacian.npz")
+    def test_laplacian_matches_octave(self):
+        """Compare Laplacian computation to Octave/MATLAB."""
+        ref = np.load(FIXTURES_DIR / "octave_laplacian.npz")
         
-        # Compute Python Laplacian
+        # Compute Python Laplacian (formula is same as MATLAB)
         L_python = normalize_laplacian(ref['A'])
         
-        # Compare to MATLAB
+        # Compare to Octave
         np.testing.assert_allclose(
             L_python, ref['L'],
             rtol=1e-5, atol=1e-8,
-            err_msg="Laplacian matrices differ from MATLAB"
+            err_msg="Laplacian matrices differ from Octave"
         )
 
 

@@ -14,15 +14,21 @@ def build_affinity_matrix(X: np.ndarray, sigma: float) -> np.ndarray:
     """
     Construct RBF affinity matrix.
     
-    Computes A_ij = exp(-||x_i - x_j||^2 / sigma^2) as defined in the paper.
+    Computes A_ij = exp(-||x_i - x_j||^2 / sigma) as defined in the paper.
+    
+    **IMPORTANT**: This uses the paper's non-standard parameterization where
+    we divide by sigma (not sigma^2). This differs from the typical RBF kernel
+    formula exp(-||x_i - x_j||^2 / (2*sigma^2)).
     
     Parameters
     ----------
     X : ndarray of shape (n_samples, n_features)
         Input data points
     sigma : float
-        Scale parameter for RBF kernel. Controls the locality of the
-        similarity measure.
+        Scale parameter for RBF kernel (paper's parameterization).
+        Controls the locality of the similarity measure.
+        Note: Smaller values = more local, larger = more global.
+        Typical values: 0.01 to 1.0 depending on data scale.
         
     Returns
     -------

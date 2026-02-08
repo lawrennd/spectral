@@ -74,7 +74,7 @@ class TestMATLABReferenceData:
         ref = np.load(FIXTURES_DIR / "matlab_three_circles.npz")
         
         # Run Python implementation
-        clf = SpectralCluster(sigma=0.05)
+        clf = SpectralCluster(sigma=0.158)  # sqrt(0.05/2) for standard RBF
         clf.fit(ref['x'])
         
         # Compare number of clusters
@@ -145,7 +145,7 @@ class TestInternalConsistency:
         """Three circles example should detect 3 clusters."""
         X = generate_three_circles(n_points=50, noise=0.03, seed=42)
         
-        clf = SpectralCluster(sigma=0.05)
+        clf = SpectralCluster(sigma=0.158)  # sqrt(0.05/2) for standard RBF
         clf.fit(X)
         
         # Should find exactly 3 clusters
@@ -164,7 +164,7 @@ class TestInternalConsistency:
         """Affinity matrix should have expected properties."""
         X = generate_three_circles(n_points=30, seed=42)
         
-        A = build_affinity_matrix(X, sigma=0.05)
+        A = build_affinity_matrix(X, sigma=0.158)  # sqrt(0.05/2) for standard RBF
         
         # Should be symmetric
         np.testing.assert_allclose(A, A.T, rtol=1e-10)
@@ -180,7 +180,7 @@ class TestInternalConsistency:
         """Laplacian eigenvalues should be in [0, 1]."""
         X = generate_three_circles(n_points=30, seed=42)
         
-        A = build_affinity_matrix(X, sigma=0.05)
+        A = build_affinity_matrix(X, sigma=0.158)  # sqrt(0.05/2) for standard RBF
         L = normalize_laplacian(A)
         
         eigvals = np.linalg.eigvalsh(L)
@@ -193,7 +193,7 @@ class TestInternalConsistency:
         """Three circles clusters should be radially separated."""
         X = generate_three_circles(n_points=50, noise=0.02, seed=42)
         
-        clf = SpectralCluster(sigma=0.05)
+        clf = SpectralCluster(sigma=0.158)  # sqrt(0.05/2) for standard RBF
         clf.fit(X)
         
         # Compute mean radius for each cluster

@@ -88,14 +88,15 @@ class TestSpectralClusterThreeCircles:
     def test_three_circles_basic(self):
         """Should detect 3 clusters in three concentric circles."""
         # Generate three concentric circles
-        np.random.seed(42)
-        npts = 30  # Reduced for faster testing
-        theta = np.linspace(0, 2*np.pi, npts, endpoint=False)
-        noise = np.random.randn(npts) * 0.1
+        # Use 100 points per circle for better separation (matches MATLAB demo)
+        np.random.seed(1)  # Use seed 1 like MATLAB demo
+        npts = 100
+        theta = np.linspace(2*np.pi/npts, 2*np.pi, npts)
+        radius = np.random.randn(npts)
         
-        r1 = 1 + noise
-        r2 = 2 + noise
-        r3 = 3 + noise
+        r1 = np.ones(npts) + 0.1*radius
+        r2 = 2*np.ones(npts) + 0.1*radius
+        r3 = 3*np.ones(npts) + 0.1*radius
         
         X = np.vstack([
             np.column_stack([r1 * np.cos(theta), r1 * np.sin(theta)]),
@@ -103,7 +104,8 @@ class TestSpectralClusterThreeCircles:
             np.column_stack([r3 * np.cos(theta), r3 * np.sin(theta)])
         ])
         
-        clf = SpectralCluster(sigma=0.05)
+        # Use converted sigma: sqrt(0.05/2) ≈ 0.158 for standard RBF formula
+        clf = SpectralCluster(sigma=0.158)
         clf.fit(X)
         
         # Should find 3 clusters
@@ -121,7 +123,8 @@ class TestSpectralClusterThreeCircles:
             np.column_stack([3*np.cos(theta), 3*np.sin(theta)])
         ])
         
-        clf = SpectralCluster(sigma=0.05)
+        # Use converted sigma for standard RBF formula
+        clf = SpectralCluster(sigma=0.158)
         clf.fit(X)
         
         # Labels should be integers from 0 to n_clusters-1

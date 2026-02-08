@@ -68,8 +68,8 @@ class TestBuildAffinityMatrix:
         A = build_affinity_matrix(X, sigma=sigma)
         
         # Distance squared = 1^2 = 1
-        # A[0,1] = exp(-1 / 1^2) = exp(-1) ≈ 0.3679
-        expected = np.exp(-1.0)
+        # A[0,1] = exp(-1 / (2*1^2)) = exp(-0.5) ≈ 0.6065 (standard RBF formula)
+        expected = np.exp(-0.5)
         np.testing.assert_allclose(A[0, 1], expected, rtol=1e-10)
     
     def test_affinity_shape(self):
@@ -154,7 +154,8 @@ class TestAffinityLaplacianIntegration:
         X = np.vstack([r1, r2, r3])
         
         # Build affinity and Laplacian with reasonable sigma
-        A = build_affinity_matrix(X, sigma=0.05)
+        # Using sqrt(0.05/2) ≈ 0.158 for standard RBF formula
+        A = build_affinity_matrix(X, sigma=0.158)
         L = normalize_laplacian(A)
         
         # Basic properties

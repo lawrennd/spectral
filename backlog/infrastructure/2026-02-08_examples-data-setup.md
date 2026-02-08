@@ -1,7 +1,7 @@
 ---
 id: "2026-02-08_examples-data-setup"
 title: "Set up examples data directory"
-status: "Proposed"
+status: "Completed"
 priority: "High"
 created: "2026-02-08"
 last_updated: "2026-02-08"
@@ -27,18 +27,21 @@ Copy example data files from the MATLAB directory to a proper examples/data/ str
 
 ## Acceptance Criteria
 
-- [ ] examples/data/ directory created
-- [ ] Data files copied from matlab/ to examples/data/:
-  - shapes.bmp
-  - ear.bmp
-  - swirls.bmp
-  - spectrogram.txt
-- [ ] examples/README.md created explaining:
-  - Overview of example notebooks
-  - Data sources (from MATLAB code)
-  - How to run the notebooks
-- [ ] Data files tracked in git (small enough)
-- [ ] examples/.gitignore if needed for generated outputs
+- [x] examples/data/ directory created
+- [x] Data files copied from matlab/ to examples/data/:
+  - shapes.bmp (1.2K)
+  - ear.bmp (29K)
+  - swirls.bmp (29K)
+  - spectrogram.txt (31K)
+- [x] examples/README.md created explaining:
+  - Overview of all 3 example notebooks
+  - Installation instructions
+  - How to run notebooks (Jupyter, JupyterLab, VS Code)
+  - Data sources and paper figure mapping
+  - Troubleshooting guide
+  - Citation information
+- [x] Data files tracked in git (all under 32KB)
+- [x] examples/.gitignore created for generated outputs
 
 ## Implementation Notes
 
@@ -66,3 +69,17 @@ examples/README.md should include:
 
 ### 2026-02-08
 Task created from CIP-0002 implementation plan.
+
+### 2026-02-08
+Task completed:
+- Created examples/data/ directory structure
+- Copied all 4 data files from matlab/ directory
+- Created comprehensive examples/README.md:
+  - Overview of each notebook with paper figure references
+  - Installation instructions with all dependencies
+  - Multiple ways to run (Jupyter, JupyterLab, VS Code)
+  - Data file descriptions with size info
+  - Citation information
+  - Troubleshooting guide
+- Created examples/.gitignore to exclude generated outputs
+- All data files small enough to commit (largest is 31KB)

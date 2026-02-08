@@ -12,23 +12,36 @@ from scipy.spatial.distance import cdist
 
 def build_affinity_matrix(X: np.ndarray, sigma: float) -> np.ndarray:
     """
-    Construct RBF affinity matrix.
+    Construct RBF affinity matrix using standard exponentiated quadratic kernel.
     
-    Computes A_ij = exp(-||x_i - x_j||^2 / sigma) as defined in the paper.
+    Computes A_ij = exp(-||x_i - x_j||^2 / (2*sigma^2)) using the standard
+    exponentiated quadratic form.
     
-    **IMPORTANT**: This uses the paper's non-standard parameterization where
-    we divide by sigma (not sigma^2). This differs from the typical RBF kernel
-    formula exp(-||x_i - x_j||^2 / (2*sigma^2)).
+    **NOTE ON MATLAB DIFFERENCE**: The original MATLAB implementation
+    (SpectralCluster.m line 32) uses a non-standard parameterization:
+    
+        MATLAB:   exp(-||x_i - x_j||^2 / sigma)  
+        Standard: exp(-||x_i - x_j||^2 / (2*sigma^2))  [CORRECT]
+    
+    Relationship between MATLAB and Python sigma values:
+    - To match MATLAB sigma_m, use Python sigma = sqrt(sigma_m / 2)
+    - Examples:
+      - MATLAB sigma=0.05 → Python sigma=sqrt(0.05/2)≈0.158
+      - MATLAB sigma=0.5  → Python sigma=sqrt(0.5/2)≈0.5
+    
+    The Python implementation uses the mathematically correct formulation
+    where sigma represents the standard deviation of the Gaussian kernel,
+    consistent with sklearn.metrics.pairwise.rbf_kernel and standard ML libraries.
     
     Parameters
     ----------
     X : ndarray of shape (n_samples, n_features)
         Input data points
     sigma : float
-        Scale parameter for RBF kernel (paper's parameterization).
+        Standard deviation (bandwidth) for exponentiated quadratic kernel.
         Controls the locality of the similarity measure.
-        Note: Smaller values = more local, larger = more global.
-        Typical values: 0.01 to 1.0 depending on data scale.
+        Smaller values = more local, larger = more global.
+        Typical values: 0.1 to 1.0 depending on data scale.
         
     Returns
     -------
@@ -49,16 +62,17 @@ def build_affinity_matrix(X: np.ndarray, sigma: float) -> np.ndarray:
     References
     ----------
     Paper Section 2, Algorithm 1 step 1
-    MATLAB: SpectralCluster.m lines 28-34
+    MATLAB: SpectralCluster.m lines 28-34 (uses non-standard formula)
+    sklearn.metrics.pairwise.rbf_kernel (uses standard formula)
     """
     # Compute pairwise squared Euclidean distances using scipy
     # cdist is optimized and handles the computation efficiently
     dists_sq = cdist(X, X, metric='sqeuclidean')
     
-    # Apply RBF (Gaussian) kernel: exp(-d^2 / sigma)
-    # IMPORTANT: MATLAB code divides by sigma (NOT sigma^2)
-    # This is non-standard but matches the paper implementation
-    A = np.exp(-dists_sq / sigma)
+    # Apply standard RBF (Gaussian) kernel: exp(-d^2 / (2*sigma^2))
+    # NOTE: MATLAB code uses exp(-d^2 / sigma) which is non-standard
+    # The factor of 2 comes from the Gaussian probability density function
+    A = np.exp(-dists_sq / (2.0 * sigma ** 2))
     
     return A
 

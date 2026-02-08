@@ -21,7 +21,10 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
     Parameters
     ----------
     sigma : float
-        Scale parameter for RBF kernel in affinity matrix
+        Bandwidth (standard deviation) for RBF kernel in affinity matrix.
+        Uses standard formula: exp(-||x-y||^2 / (2*sigma^2)).
+        To convert from MATLAB code: sigma_python = sqrt(sigma_matlab / 2).
+        Example: MATLAB sigma=0.05 → Python sigma≈0.158
     lambda_ : float, default=0.2
         Elongation parameter for distance metric in k-means
     max_clusters : int, default=10
@@ -59,7 +62,7 @@ class SpectralCluster(BaseEstimator, ClusterMixin):
     ...     np.column_stack([2*np.cos(theta), 2*np.sin(theta)]),
     ...     np.column_stack([3*np.cos(theta), 3*np.sin(theta)])
     ... ])
-    >>> clf = SpectralCluster(sigma=0.05)
+    >>> clf = SpectralCluster(sigma=0.16)  # sqrt(0.05/2) for MATLAB compatibility
     >>> clf.fit(X)
     >>> print(f"Found {clf.n_clusters_} clusters")
     
